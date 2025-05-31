@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Password Generator</title>
+  <style>
+    :root {
+      --bg-color: #0f1210;
+      --text-color: #ffffff;
+      --box-color: #1a1a1a;
+      --accent-color: #00FF57;
+      --link-color: #5900ff;
+    }
+
+    body.light-mode {
+      --bg-color: #f0f0f0;
+      --text-color: #1a1a1a;
+      --box-color: #ffffff;
+      --accent-color: #5900ff;
+      --link-color: #00FF57;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      font-family: 'Courier New', Courier, monospace;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      transition: background-color 0.5s ease, color 0.5s ease;
+    }
+
+    .container {
+      background-color: var(--box-color);
+      padding: 30px;
+      border-radius: 10px;
+      width: 500px;
+      box-shadow: 0 0 20px #000;
+      animation: fadeIn 0.7s ease-in-out;
+      transition: background-color 0.5s ease, color 0.5s ease;
+      position: relative;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    h2 {
+      font-size: 20px;
+      margin-bottom: 10px;
+    }
+
+    .theme-toggle {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      cursor: pointer;
+      background: none;
+      border: 2px solid var(--accent-color);
+      color: var(--accent-color);
+      padding: 5px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      transition: all 0.3s ease;
+    }
+
+    .theme-toggle:hover {
+      background-color: var(--accent-color);
+      color: var(--box-color);
+    }
+
+    .password-box {
+      display: flex;
+      align-items: center;
+      margin: 20px 0;
+    }
+
+    #password {
+      flex: 1;
+      background: var(--box-color);
+      border: 1px solid var(--text-color);
+      padding: 10px;
+      font-size: 18px;
+      color: var(--text-color);
+      transition: box-shadow 0.3s ease;
+    }
+
+    #password:focus {
+      outline: none;
+      box-shadow: 0 0 8px var(--accent-color);
+    }
+
+    .copy-btn {
+      background: none;
+      border: none;
+      color: var(--text-color);
+      cursor: pointer;
+      margin-left: 10px;
+      font-size: 18px;
+      transition: transform 0.2s ease;
+    }
+
+    .copy-btn:hover {
+      transform: scale(1.2);
+    }
+
+    hr {
+      margin: 20px 0;
+      border-color: #444;
+    }
+
+    .options {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+
+    .options label {
+      display: flex;
+      align-items: center;
+      margin: 10px 0;
+      transition: transform 0.2s ease;
+    }
+
+    .options input[type="checkbox"]:hover {
+      transform: scale(1.1);
+    }
+
+    .options input[type="checkbox"] {
+      margin-right: 8px;
+    }
+
+    .slider-container {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 10px;
+      width: 100%;
+    }
+
+    .slider-container input[type="range"] {
+      flex: 1;
+      transition: all 0.3s ease;
+    }
+
+    .generate-btn {
+      margin-top: 20px;
+      padding: 10px 20px;
+      background: var(--accent-color);
+      border: none;
+      color: black;
+      font-weight: bold;
+      font-size: 16px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .generate-btn:hover {
+      transform: scale(1.05);
+      filter: brightness(0.9);
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 14px;
+      color: #ccc;
+    }
+
+    .footer a {
+      color: var(--link-color);
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+
+    .footer a:hover {
+      text-decoration: underline;
+    }
+
+    #password.glow {
+      box-shadow: 0 0 10px var(--accent-color);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <button class="theme-toggle" onclick="toggleTheme()">🌗 Toggle Mode</button>
+
+    <h2>> Generate a secure password</h2>
+
+    <div class="password-box">
+      <input type="text" id="password" readonly>
+      <button class="copy-btn" onclick="copyPassword()">📋</button>
+    </div>
+
+    <hr>
+
+    <div>
+      <strong>Customize your password</strong>
+      <div class="options">
+        <label><input type="checkbox" id="uppercase" checked> Uppercase</label>
+        <label><input type="checkbox" id="lowercase" checked> Lowercase</label>
+        <label><input type="checkbox" id="numbers" checked> Numeric</label>
+        <label><input type="checkbox" id="symbols"> Symbols</label>
+        <div class="slider-container">
+          <label for="length">Password Length:</label>
+          <input type="number" id="length-number" value="20" min="4" max="40" style="width: 50px;">
+          <input type="range" id="length-range" min="4" max="40" value="20">
+        </div>
+      </div>
+    </div>
+
+    <button class="generate-btn" onclick="generatePassword()">Generate</button>
+
+    
+
+  <script>
+    const passwordEl = document.getElementById('password');
+    const uppercaseEl = document.getElementById('uppercase');
+    const lowercaseEl = document.getElementById('lowercase');
+    const numbersEl = document.getElementById('numbers');
+    const symbolsEl = document.getElementById('symbols');
+    const lengthRangeEl = document.getElementById('length-range');
+    const lengthNumberEl = document.getElementById('length-number');
+
+    const upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    const lower = "abcdefghijklmnopqrstuvwxyz";
+    const number = "0123456789";
+    const symbol = "!@#$%^&*()_+[]{}|;:,.<>?";
+
+    function generatePassword() {
+      let characters = "";
+      if (uppercaseEl.checked) characters += upper;
+      if (lowercaseEl.checked) characters += lower;
+      if (numbersEl.checked) characters += number;
+      if (symbolsEl.checked) characters += symbol;
+
+      const length = parseInt(lengthNumberEl.value);
+      let password = "";
+      for (let i = 0; i < length; i++) {
+        const randomChar = characters[Math.floor(Math.random() * characters.length)];
+        password += randomChar || '';
+      }
+
+      passwordEl.value = password;
+
+      // Glow effect
+      passwordEl.classList.add("glow");
+      setTimeout(() => passwordEl.classList.remove("glow"), 400);
+    }
+
+    function copyPassword() {
+      passwordEl.select();
+      document.execCommand("copy");
+      alert("Password copied!");
+    }
+
+    function toggleTheme() {
+      document.body.classList.toggle('light-mode');
+    }
+
+    // Sync range and number input
+    lengthRangeEl.addEventListener('input', () => {
+      lengthNumberEl.value = lengthRangeEl.value;
+    });
+    lengthNumberEl.addEventListener('input', () => {
+      lengthRangeEl.value = lengthNumberEl.value;
+    });
+
+    // Default password on load
+    generatePassword();
+  </script>
+
+</body>
+</html>
